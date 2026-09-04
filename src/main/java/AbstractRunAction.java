@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,13 +37,28 @@ public abstract class AbstractRunAction extends AnAction {
 
         Block block = findBlock(editor);
         if (block != null) {
+            String code = stripBlankLines(block.content);
             if (prefs.getTargetConsole() == Preferences.TARGET_INTERNAL_CONSOLE) {
-                PythonConsoleUtils.execute(e, block.content);
+                PythonConsoleUtils.execute(e, code);
             } else {
-                Tmux.executeInTmux(prefs, block.content);
+                Tmux.executeInTmux(prefs, code);
             }
             postExecuteHook(editor, block);
         }
+    }
+
+    /** Removes blank lines at the start and end of the text, keeping the indentation of the remaining lines. */
+    static String stripBlankLines(String text) {
+        String[] lines = text.split("\n", -1);
+        int start = 0;
+        int end = lines.length;
+        while (start < end && lines[start].trim().isEmpty()) {
+            start++;
+        }
+        while (end > start && lines[end - 1].trim().isEmpty()) {
+            end--;
+        }
+        return String.join("\n", Arrays.copyOfRange(lines, start, end));
     }
 
     @Override
