@@ -26,7 +26,7 @@ public class Preferences {
     }
 
     public String getDelimiterRegexp() {
-        return props.getValue(PREF_DELIMITER_REGEXP, "^\\s*##.*");
+        return props.getValue(PREF_DELIMITER_REGEXP, "^\\s*#\\s*%%.*");
     }
 
     public void setDelimiterRegexp(String regexp) {
@@ -38,7 +38,7 @@ public class Preferences {
     }
 
     public String getDelimiterInsert() {
-        return props.getValue(PREF_DELIMITER_INSERT, "##");
+        return props.getValue(PREF_DELIMITER_INSERT, "# %%");
     }
 
     public void setDelimiterInsert(String regexp) {

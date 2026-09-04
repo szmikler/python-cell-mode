@@ -1,12 +1,11 @@
 <idea-plugin>
   <id>net.fhtagn.pycharm.cellmode</id>
-  <name>PyCharm cell mode</name>
-  <version>1.3.1</version>
-  <vendor email="julien@fhtagn.net" url="https://github.com/julienr/pycharm-cellmode">Julien Rebetez, clouds56</vendor>
+  <name>Python Cell Mode</name>
+  <vendor email="julien@fhtagn.net" url="https://github.com/julienr/pycharm-cellmode">Julien Rebetez, clouds56, Szymon Mikler</vendor>
 
   <description><![CDATA[
-      Cell mode execution for PyCharm (provides an action to send code between
-      <i>##</i> marks to the python console.
+      Cell mode execution for Python files in JetBrains IDEs (provides an action to send code between
+      <i># %%</i> marks to the python console.
     ]]></description>
 
   <change-notes><![CDATA[
@@ -21,8 +20,6 @@
     ]]>
   </change-notes>
 
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="203.3645.34"/>
 
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
@@ -34,34 +31,28 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
     <projectConfigurable implementation="CellModeConfigurable"></projectConfigurable>
-    <codeInsight.lineMarkerProvider language="Python" implementationClass="PythonCellLineSeparatorProvider"/>
     <runLineMarkerContributor language="Python" implementationClass="PythonCellRunLineMarker"/>
+    <editorFactoryListener implementation="CellHighlighter"/>
+    <lang.foldingBuilder language="Python" implementationClass="CellFoldingBuilder"/>
   </extensions>
 
-  <application-components>
-    <!-- Add your application components here -->
-  </application-components>
 
-  <project-components>
-    <!-- Add your project components here -->
-  </project-components>
 
   <actions>
     <!-- Add your actions here -->
     <group id="PythonCellMode.Menu" text="_Cell Mode" description="cell mode" popup="true">
       <add-to-group group-id="CodeMenu" anchor="last" />
         <action id="PythonCellMode.RunCellMoveNext" class="RunCellMoveNextAction" text="Run _Cell And Move To Next"
-                description="Run cell surrounding the cursor in interpreter and move to next cell" icon="AllIcons.Actions.Run_anything">
+                description="Run cell surrounding the cursor in interpreter and move to next cell" icon="AllIcons.Actions.Execute">
             <add-to-group group-id="MainToolBar" anchor="last" />
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl B"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl ENTER"/>
         </action>
         <action id="PythonCellMode.RunCell" class="RunCellAction" text="Run _Cell"
                 description="Run cell surrounding the cursor in interpreter">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl G"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt ENTER"/>
         </action>
         <action id="PythonCellMode.RunLine" class="RunLineAction" text="Run _Line"
                 description="Run line under the caret">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl C"/>
         </action>
         <action id="PythonCellMode.RunSelection" class="RunSelectionAction" text="Run _Selection"
                 description="Run line under the caret">

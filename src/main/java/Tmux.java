@@ -1,5 +1,4 @@
 import com.intellij.openapi.ui.Messages;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 
@@ -80,7 +79,7 @@ public class Tmux {
             // that the ".0" at the end gets truncated for whatever reason and tmux doesn't find the session...
             // encoding or escaping issue ?
             // So for now, do everything through /bin/sh
-            final String command = StringUtils.join(args, " ");
+            final String command = String.join(" ", args);
             pb = new ProcessBuilder("/bin/sh", "-c", command);
         } else {
             pb = new ProcessBuilder(args);
@@ -91,7 +90,7 @@ public class Tmux {
         try {
             p.waitFor();
             if (p.exitValue() != 0) {
-                String msg = "Error executing " + StringUtils.join(args, " ") + "\n"
+                String msg = "Error executing " + String.join(" ", args) + "\n"
                            + "Error : " + readFully(p.getInputStream());
                 Messages.showErrorDialog(msg, "Python Cell Mode Error");
             }

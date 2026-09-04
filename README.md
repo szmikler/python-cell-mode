@@ -1,19 +1,37 @@
-# Deprecation warning
+# Python Cell Mode
 
-This plugin is not actively developed anymore and may not work correctly in the latest version of PyCharm.
+This plugin provides actions to allow executing Python code cells in JetBrains IDEs, much like in Jupyter Notebooks.
 
-If anyone wants to take over as a maintainer, I'm happy to archive this repository and redirect to a maintained fork.
+A "code cell" is a block of lines, typically delimited by `# %%`, for example:
 
-# Python cell mode for PyCharm
-This plugin provides actions to allow executing Python code using "cells" in PyCharm, much like [Spyder](https://docs.spyder-ide.org/current/editor.html#defining-code-cells).
+```
+# %%
 
-A "code cell" is a block of lines, typically delimited by `##`, for example:
+print("foo")
 
-    ##
-    print 'foo'
-    if True:
-        print 'bar'
-    ##
+if True:
+    print("bar")
+
+# %%
+```
+
+## Changes in this fork
+
+Compared to the original plugin, this fork adds:
+
+New featues:
+- Makes every cell foldable, the delimiter line staying visible.
+- Draws a horizontal separator above every cell delimiter.
+- Marks the active cell with a thin vertical bar.
+
+Other changes:
+- Builds with Gradle and the IntelliJ Platform Gradle Plugin against PyCharm 2026.2. Removed old API usages that no longer exist.
+- Renamed the plugin to "Python Cell Mode" since it works in any JetBrains IDE with the Python plugin, not only PyCharm.
+- Uses `# %%` as the default cell delimiter (Spyder, VS Code and Jupytext style) instead of `##`.
+- Changes the default shortcuts: Run Cell And Move To Next is `Shift+Ctrl+Enter`, Run Cell is `Ctrl+Alt+Enter`.
+- Fixes the missing-icon error logged at startup for the Run Cell And Move To Next action.
+
+## Description
 
 The plugin options allow you to specify your own regular expression to delimits code cells. 
 
@@ -34,47 +52,23 @@ The second option allows you to have a working interactive matplotlib in an exte
 
 Check the "Python Cell Mode" settings in the preferences to switch between the two modes.
 
-This plugin is similar to https://github.com/julienr/vim-cellmode
-
 ## Installation
 
-Install from [jetbrains plugin repository](https://plugins.jetbrains.com/plugin/7858)
+Install from a locally built zip:
 
-Alternatively, you can install directly from the jar :
-
-1. Download [PythonCellMode.jar](https://github.com/julienr/pycharm-cellmode/blob/master/PythonCellMode.jar) 
-2. In PyCharm, go to "Preferences", search for "plugin". Click on "Install from disk" and choose the downloaded jar
-3. Restart PyCharm and use the new actions in the "Code" menu
-4. (optional) Configure keyboard shortcuts by searching for "Cell" in your keymap
+1. Run `./gradlew buildPlugin` and take `build/distributions/python-cellmode-<version>.zip`
+2. In the IDE, go to "Preferences", search for "plugin". Click on "Install from disk" and choose the zip
+3. Restart the IDE and use the new actions in the "Code" menu
 
 ## Developing the plugin
 
-For now, here are some instructions from memory that may be helpful:
-(copied from https://github.com/Khan/ka-pycharm-plugin )
+The build uses Gradle with the [IntelliJ Platform Gradle Plugin](https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html).
+The target PyCharm version is declared in `build.gradle.kts` and downloaded automatically. A JDK 21 or newer is
+required (the JetBrains Runtime shipped with any JetBrains IDE works: set `JAVA_HOME` to its `jbr` directory).
 
-1. Install IntelliJ IDEA Community Edition.
-2. Open the repo as an IntelliJ project.
-3. Choose your PyCharm installation as the plugin development SDK.
-4. Make a run configuration from within IntelliJ and run it. If things work, it will launch a fresh PyCharm instance
-   with the plugin installed, which you can use for testing.
+- `./gradlew buildPlugin` builds the plugin zip into `build/distributions/`
+- `./gradlew runIde` starts a sandboxed PyCharm with the plugin installed
+- `./gradlew verifyPlugin` checks API compatibility with the target IDE
 
-### Dependencies on com.jetbrains.python.console
+Opening the repo in IntelliJ IDEA imports the Gradle project directly.
 
-After just loading the plugin in Intellij, you might have missing dependencies on `com.jetbrains.python.console`.
-
-As explaind on [this page](https://plugins.jetbrains.com/docs/intellij/plugin-dependencies.html?from=DevkitPluginXmlInspection#dependency-declaration-in-pluginxml), what you need
-to do is to manually add 'python-ce' to the classpath of the selected SDK (Pycharm community edition). 
-
-To do so, right click on 'PythonCellMode' -> Open Module Settings and then your SDK should look like this:
-
-![SDK configuration](/images/sdk_configuration.png?raw=true)
-
-### Relevant plugin dev links
-
-http://bjorn.tipling.com/how-to-make-an-intellij-idea-plugin-in-30-minutes
-
-http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-
-https://github.com/JetBrains/intellij-community/blob/1d171c3a1a5fafb82c9a10f8f7b2acd616254f38/python/src/com/jetbrains/python/actions/PyExecuteSelectionAction.java
-
-https://confluence.jetbrains.com/display/IDEADEV/PluginDevelopment
